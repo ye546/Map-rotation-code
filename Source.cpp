@@ -5,6 +5,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <iomanip>
 #include <windows.h>
 #pragma warning(disable : 4996) //ignore the deprecated bs
 
@@ -19,7 +20,13 @@ int main() {
 	struct tm* now = localtime(&t);
 	int duplicates = 0;
 	char xd, xd2;
-	CreateDirectoryA("C:/NewRotation", NULL);
+
+	if(!CreateDirectoryA("C:/NewRotation", NULL)){
+        printf("Could not create folder for savelocation, or it already exists\n");
+	}else{
+        printf("Succesfully created a folder in 'C:/NewRotation'\n");
+	}
+
 	std::string bannedMaps[12];
 	std::string newMaps[12];
 	std::string fileName;
@@ -47,6 +54,7 @@ int main() {
 
 	printf("Skipping these maps!\n------------\n");
 	for (int i = 0; i < bannedMaps->length(); i++) {
+		if(bannedMaps[i] == "")continue;
 		std::cout << bannedMaps[i] << std::endl;
 	}
 
@@ -72,10 +80,7 @@ int main() {
 	newMappack << "new rotation: " << (now->tm_year + 1900) << "/" << (now->tm_mon + 1) << "/" << now->tm_mday << " " << now->tm_hour << "-" << now->tm_min << "-" << now->tm_sec << "\n";
 	newMappack << "gametype zom ";
 
-	try_again2://printf("enter a key\n"); //std::cin >> xd2;
-	//assign random maps to newMaps[] array
-	//this entire code here needs improving, but I'm not certian of what needs that is kek
-	for (int i = 0; i < 12; i++) {
+	try_again2:for (int i = 0; i < 12; i++) {
 		newMaps[i] = maps[(rand() % length)];
 		if (newMaps[i] == bannedMaps[0] || newMaps[i] == bannedMaps[1] ||
 			newMaps[i] == bannedMaps[2] || newMaps[i] == bannedMaps[3] ||
@@ -89,12 +94,12 @@ int main() {
 			goto try_again2;
 		}
 	}
-	printf("\n------------\n");
+
+	printf("\n------New Maps------ \t\t ------Old Maps------ \n");
 	for (int i = 0; i < 12; i++) {
-		std::cout << newMaps[i] << std::endl;
-		//printf("%s\n", newMaps->c_str());
+		std::cout << newMaps[i] << std::setw(4) << bannedMaps[i] << std::endl;
 	}
-	
+
 	printf("\npress 'k' to accept the maplist\nelse just press a random key\n"); std::cin >> xd;
 	if (xd == 'k') {
 		for (int i = 0; i < 12; i++) {
