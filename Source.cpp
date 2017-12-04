@@ -5,7 +5,6 @@
 #include <string>
 #include <cstring>
 #include <iostream>
-#include <iomanip>
 #include <windows.h>
 #pragma warning(disable : 4996) //ignore the deprecated bs
 
@@ -22,12 +21,12 @@ int main() {
 	char xd, xd2;
 
 	if(!CreateDirectoryA("C:/NewRotation", NULL)){
-        printf("Could not create folder for savelocation, or it already exists\n");
+       goto next;
 	}else{
-        printf("Succesfully created a folder in 'C:/NewRotation'\n");
+        CreateDirectoryA("C:/NewRotation", NULL);
 	}
 
-	std::string bannedMaps[12];
+    next:std::string bannedMaps[12];
 	std::string newMaps[12];
 	std::string fileName;
 
@@ -95,9 +94,9 @@ int main() {
 		}
 	}
 
-	printf("\n------New Maps------ \t\t ------Old Maps------ \n");
+	printf("\n------New Maps------ \t ------Old Maps------ \n");
 	for (int i = 0; i < 12; i++) {
-		std::cout << newMaps[i] << std::setw(4) << bannedMaps[i] << std::endl;
+		std::cout << newMaps[i] << "<-->" << bannedMaps[i] << std::endl << std::endl;
 	}
 
 	printf("\npress 'k' to accept the maplist\nelse just press a random key\n"); std::cin >> xd;
@@ -108,6 +107,7 @@ int main() {
 		}
 	}
 	else {
+        system("cls");
 		goto try_again2;
 	}
 	printf("------------\n");
