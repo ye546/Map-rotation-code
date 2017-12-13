@@ -20,43 +20,56 @@ int main() {
 	int duplicates = 0;
 	char xd, xd2;
 
-	if(!CreateDirectoryA("C:/NewRotation", NULL)){
-       goto next;
-	}else{
-        CreateDirectoryA("C:/NewRotation", NULL);
+	//create directory if it doesn't already exist
+	if (!CreateDirectoryA("C:/NewRotation", NULL))
+	{
+		goto cont;
+	}
+	else
+	{
+		CreateDirectoryA("C:/NewRotation", NULL);
+		printf("created a directory at 'C:/NewRotation'\n");
 	}
 
-    next:std::string bannedMaps[12];
+cont:std::string bannedMaps[12];
 	std::string newMaps[12];
 	std::string fileName;
 
-	for (int i = 0; i < 12; i++) {
+	//initiate the arrays as NULL
+	for (int i = 0; i < 12; i++)
+	{
 		bannedMaps[i] = "";
-		for (int j = 0; j < 12; j++) {
-			newMaps[j] = "";
-		}
+	}
+	for (int j = 0; j < 12; j++)
+	{
+		newMaps[j] = "";
 	}
 
-	try_again:std::cin >> fileName;
+try_again:std::cin >> fileName;
 	std::ifstream readFile(fileName);
 
-	if (readFile.is_open()) {
-		for (int i = 0; i < 12; i++) {
+	//read the banned maps from a .txt file
+	if (readFile.is_open())
+	{
+		for (int i = 0; i < 12; i++)
+		{
 			readFile >> bannedMaps[i];
 		}
 		readFile.close();
 	}
-	else {
+	else
+	{
 		printf("No such file, try again.\n");
 		goto try_again;
 	}
 
 	printf("Skipping these maps!\n------------\n");
-	for (int i = 0; i < bannedMaps->length(); i++) {
-		if(bannedMaps[i] == "")continue;
+	for (int i = 0; i < 12; i++)
+	{
 		std::cout << bannedMaps[i] << std::endl;
 	}
 
+	//initiate all the available maps
 	std::string maps[] = { "up01_4worlds", "up01_a51", "up01_annihilation", "up01_assault", "up01_asturzom", "up01_asylum", "up01_auferstehung", "up01_ayatown",
 		"up01_bangbang", "up01_barrack44", "up01_battalion", "up01_bier", "up01_bodesteinv2", "up01_bromberg", "up01_brombergv2", "up01_bulton", "up01_bultonv2",
 		"up01_canismajoris", "up01_cars", "up01_cbble", "up01_cbblev2", "up01_chamberofsecrets", "up01_chateauclassic", "up01_clavarlaespada", "up01_common",
@@ -79,40 +92,59 @@ int main() {
 	newMappack << "new rotation: " << (now->tm_year + 1900) << "/" << (now->tm_mon + 1) << "/" << now->tm_mday << " " << now->tm_hour << "-" << now->tm_min << "-" << now->tm_sec << "\n";
 	newMappack << "gametype zom ";
 
-	try_again2:for (int i = 0; i < 12; i++) {
-		newMaps[i] = maps[(rand() % length)];
-		if (newMaps[i] == bannedMaps[0] || newMaps[i] == bannedMaps[1] ||
-			newMaps[i] == bannedMaps[2] || newMaps[i] == bannedMaps[3] ||
-			newMaps[i] == bannedMaps[4] || newMaps[i] == bannedMaps[5] ||
-			newMaps[i] == bannedMaps[6] || newMaps[i] == bannedMaps[7] ||
-			newMaps[i] == bannedMaps[8] || newMaps[i] == bannedMaps[9] ||
-			newMaps[i] == bannedMaps[10] || newMaps[i] == bannedMaps[11]) {
-			emptyArray(newMaps);
+	//assign the new maps and compare to banned ones
+try_again2:for (int i = 0; i < 12; i++)
+{
+	newMaps[i] = maps[(rand() % length)];
+	for (int j = 0; j < 12; j++)
+	{
+		if (newMaps[i] == bannedMaps[j])
+		{
+			newMaps[i] = maps[(rand() % length)];
+			//emptyArray(newMaps);
 			printf("\nDuplicate found, redoing the process!\n");
 			duplicates++;
-			goto try_again2;
+			//goto try_again2;
 		}
 	}
+}
 
-	printf("\n------New Maps------ \t ------Old Maps------ \n");
-	for (int i = 0; i < 12; i++) {
-		std::cout << newMaps[i] << "<-->" << bannedMaps[i] << std::endl << std::endl;
-	}
+		   //check for complications, god have mercy upon us if there are any
+		   for (int i = 0; i < 12; i++)
+		   {
+			   for (int j = 0; j < 12; j++)
+			   {
+				   if (newMaps[i] == bannedMaps[j])
+					   printf("we still have duplicates ;_;\n");
+			   }
+		   }
 
-	printf("\npress 'k' to accept the maplist\nelse just press a random key\n"); std::cin >> xd;
-	if (xd == 'k') {
-		for (int i = 0; i < 12; i++) {
-			newMappack << newMaps[i];
-			newMappack << " map ";
-		}
-	}
-	else {
-        system("cls");
-		goto try_again2;
-	}
-	printf("------------\n");
-	printf("%i Duplicate(s) found!\n", duplicates);
-	printf("Done!\n");
-	getchar();
-	return 0;
+		   //print new and old maps to compare them
+		   printf("\n------New Maps------ ------Banned Maps------\n");
+		   for (int i = 0; i < 12; i++)
+		   {
+			   std::cout << newMaps[i] << "<->" << bannedMaps[i] << std::endl;
+		   }
+
+		   printf("\npress 'k' to accept the maplist\nelse just press a random key\n"); std::cin >> xd;
+
+		   //wait for user input
+		   switch (xd)
+		   {
+		   case 'k':
+			   for (int i = 0; i < 12; i++)
+			   {
+				   newMappack << newMaps[i];
+				   newMappack << " map ";
+			   }
+			   break;
+		   case 'q':
+			   exit(EXIT_SUCCESS);
+			   break;
+		   default: system("cls"); goto try_again2; break;
+		   }
+
+		   printf("------------\n%i Duplicate(s) found!\nDone!\n", duplicates);
+		   getchar();
+		   return 0;
 }
