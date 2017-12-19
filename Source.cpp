@@ -18,53 +18,54 @@ int main() {
 	time_t t = time(0);
 	struct tm* now = localtime(&t);
 	int duplicates = 0;
+	bool dup = true;
 	char xd, xd2;
 
 	//create directory if it doesn't already exist
-	if (!CreateDirectoryA("C:/NewRotation", NULL))
+	if (!CreateDirectoryA("C:/NewRotation", NULL)) 
 	{
 		goto cont;
 	}
-	else
+	else 
 	{
 		CreateDirectoryA("C:/NewRotation", NULL);
 		printf("created a directory at 'C:/NewRotation'\n");
 	}
 
-cont:std::string bannedMaps[12];
+	cont:std::string bannedMaps[12];
 	std::string newMaps[12];
 	std::string fileName;
 
 	//initiate the arrays as NULL
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 12; i++) 
 	{
 		bannedMaps[i] = "";
 	}
-	for (int j = 0; j < 12; j++)
+	for (int j = 0; j < 12; j++) 
 	{
 		newMaps[j] = "";
 	}
 
-try_again:std::cin >> fileName;
+	try_again:std::cin >> fileName;
 	std::ifstream readFile(fileName);
 
 	//read the banned maps from a .txt file
-	if (readFile.is_open())
+	if (readFile.is_open()) 
 	{
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < 12; i++) 
 		{
 			readFile >> bannedMaps[i];
 		}
 		readFile.close();
 	}
-	else
+	else 
 	{
 		printf("No such file, try again.\n");
 		goto try_again;
 	}
 
 	printf("Skipping these maps!\n------------\n");
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 12; i++) 
 	{
 		std::cout << bannedMaps[i] << std::endl;
 	}
@@ -93,58 +94,65 @@ try_again:std::cin >> fileName;
 	newMappack << "gametype zom ";
 
 	//assign the new maps and compare to banned ones
-try_again2:for (int i = 0; i < 12; i++)
-{
-	newMaps[i] = maps[(rand() % length)];
-	for (int j = 0; j < 12; j++)
+	try_again2:for (int i = 0; i < 12; i++) 
 	{
-		if (newMaps[i] == bannedMaps[j])
+		newMaps[i] = maps[(rand() % length)];
+		for (int j = 0; j < 12; j++) 
 		{
-			newMaps[i] = maps[(rand() % length)];
-			//emptyArray(newMaps);
-			printf("\nDuplicate found, redoing the process!\n");
-			duplicates++;
-			//goto try_again2;
+			if (newMaps[i] == bannedMaps[j]) 
+			{
+				newMaps[i] = maps[(rand() % length)];
+				//emptyArray(newMaps);
+				printf("\nDuplicate found, redoing the process!\n");
+				duplicates++;
+				//goto try_again2;
+			}
 		}
 	}
-}
 
-		   //check for complications, god have mercy upon us if there are any
-		   for (int i = 0; i < 12; i++)
-		   {
-			   for (int j = 0; j < 12; j++)
-			   {
-				   if (newMaps[i] == bannedMaps[j])
-					   printf("we still have duplicates ;_;\n");
-			   }
-		   }
+	//check for complications, god have mercy upon us if there are any
+	for (int i = 0; i < 12; i++) 
+	{
+		for (int j = 0; j < 12; j++) 
+		{
+			if (newMaps[i] == bannedMaps[j]) {
+				printf("we still have duplicates ;_;\n");
+				dup = false;
+			}
+		}
+	}
 
-		   //print new and old maps to compare them
-		   printf("\n------New Maps------ ------Banned Maps------\n");
-		   for (int i = 0; i < 12; i++)
-		   {
-			   std::cout << newMaps[i] << "<->" << bannedMaps[i] << std::endl;
-		   }
+	if (!dup) {
+		emptyArray(newMaps);
+		goto try_again;
+	}
 
-		   printf("\npress 'k' to accept the maplist\nelse just press a random key\n"); std::cin >> xd;
+	//print new and old maps to compare them
+	printf("\n------New Maps------ ------Banned Maps------\n");
+	for (int i = 0; i < 12; i++) 
+	{
+		std::cout << newMaps[i] << "<->" << bannedMaps[i] << std::endl;
+	}
+	
+	printf("\npress 'k' to accept the maplist\nelse just press a random key\n"); std::cin >> xd;
+	
+	//wait for user input
+	switch (xd)
+	{
+	case 'k':
+		for (int i = 0; i < 12; i++) 
+		{
+			newMappack << newMaps[i];
+			newMappack << " map ";
+		}
+		break;
+	case 'q':
+		exit(EXIT_SUCCESS);
+		break;
+	default: system("cls"); goto try_again2; break;
+	}
 
-		   //wait for user input
-		   switch (xd)
-		   {
-		   case 'k':
-			   for (int i = 0; i < 12; i++)
-			   {
-				   newMappack << newMaps[i];
-				   newMappack << " map ";
-			   }
-			   break;
-		   case 'q':
-			   exit(EXIT_SUCCESS);
-			   break;
-		   default: system("cls"); goto try_again2; break;
-		   }
-
-		   printf("------------\n%i Duplicate(s) found!\nDone!\n", duplicates);
-		   getchar();
-		   return 0;
+	printf("------------\n%i Duplicate(s) found!\nDone!\n", duplicates);
+	getchar();
+	return 0;
 }
